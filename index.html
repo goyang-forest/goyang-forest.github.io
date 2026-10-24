@@ -180,12 +180,15 @@ const VARIANTS=[
 
 const S={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let mode=S.get("mode")||"mix", custom=S.get("custom")||"", cur=-1;
+// 방문자마다 무작위 시작점: 같은 의원이라도 보내는 사람에 따라 다른 문구가 가도록
+let off=parseInt(S.get("off"),10);
+if(!(off>=0&&off<5)){off=Math.floor(Math.random()*5);try{const a=new Uint32Array(1);crypto.getRandomValues(a);off=a[0]%5}catch(e){}S.set("off",String(off))}
 let sent=new Set(); try{sent=new Set(JSON.parse(S.get("sent")||"[]"))}catch(e){}
 const $=id=>document.getElementById(id);
 if(/KAKAOTALK/i.test(navigator.userAgent)){$("kakao").hidden=false;$("ext").href="kakaotalk://web/openExternal?url="+encodeURIComponent(location.href)}
 const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 
-function textFor(i){if(mode==="mix")return VARIANTS[i%VARIANTS.length];if(mode==="custom")return custom;return VARIANTS[+mode]}
+function textFor(i){if(mode==="mix")return VARIANTS[(i+off)%VARIANTS.length];if(mode==="custom")return custom;return VARIANTS[+mode]}
 function body(i){return "존경하는 "+MEMBERS[i].n+" 시의원님, "+textFor(i)}
 function href(i){return "sms:"+MEMBERS[i].p.replace(/-/g,"")+(isIOS?"&":"?")+"body="+encodeURIComponent(body(i))}
 function esc(t){return t.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
@@ -231,7 +234,7 @@ $("reset").onclick=()=>{sent.clear();S.set("sent","[]");renderGrid();renderPanel
 
 function renderChips(){
   const c=$("chips");c.innerHTML="";
-  const opts=[["mix","골고루 섞기","의원마다 아래 문구가 돌아가며 들어갑니다 (추천)"]].concat(VARIANTS.map((v,i)=>[String(i),v,""]));
+  const opts=[["mix","골고루 섞기","보내는 사람마다 의원별 문구 배정이 달라서, 한 의원에게 같은 문구만 몰리지 않습니다 (추천)"]].concat(VARIANTS.map((v,i)=>[String(i),v,""]));
   if(mode==="custom")opts.push(["custom","직접 고친 문구",""]);
   opts.forEach(([k,l,sub])=>{const b=document.createElement("button");b.type="button";b.className="chip";
     b.setAttribute("aria-pressed",mode===k);b.innerHTML=esc(l)+(sub?"<small>"+sub+"</small>":"");

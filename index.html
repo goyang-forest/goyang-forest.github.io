@@ -224,6 +224,7 @@ function nextUnsent(){for(let k=1;k<=MEMBERS.length;k++){const j=(cur+k+MEMBERS.
 $("send").addEventListener("click",()=>{
   if(cur<0)return; const m=MEMBERS[cur];
   sent.add(m.n); S.set("sent",JSON.stringify([...sent]));
+  try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:"보내기-버튼",title:"보내기 버튼 누름",event:true})}catch(e){}
   setTimeout(()=>{renderGrid();renderPanel();toast(m.n+" 의원 보냄 표시. 문자 앱이 안 열렸다면 번호·문구 복사를 쓰세요")},300);
 });
 $("next").onclick=()=>{const j=nextUnsent();if(j<0){toast("모두 보냄 표시가 되었습니다");return}select(j);
@@ -251,5 +252,6 @@ $("msg").value=textFor(0);
 renderChips();renderGrid();renderPanel();
 </script>
 
+<script data-goatcounter="https://goyang-forest.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

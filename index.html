@@ -93,7 +93,7 @@ textarea{width:100%;box-sizing:border-box;font:inherit;font-size:.9rem;color:var
 
 <div class="wrap">
   <header style="display:flex;flex-direction:column;gap:8px">
-    <h1>표고제한 조례 삭제에 반대하는 문자를 고양시의원께 보내주세요</h1>
+    <h1>표고제한 조례 삭제에 반대하는 문자를 고양시의원과 지역 국회의원께 보내주세요</h1>
     <p class="lead">① 아래에서 의원 이름을 누르고 ② 문구에 이름이 맞게 들어갔는지 확인한 뒤 ③ <b>보내기</b>를 누르세요. 문자 앱이 열리면 전송을 누르고 돌아오면 됩니다. 한 명씩 따로 보내져서 단체방이 생기지 않습니다.</p>
   </header>
 
@@ -118,7 +118,7 @@ textarea{width:100%;box-sizing:border-box;font:inherit;font-size:.9rem;color:var
 
   <div class="prog">
     <div class="bar"><i id="barFill"></i></div>
-    <span class="count" id="count">0 / 33명</span>
+    <span class="count" id="count">0 / 37명</span>
   </div>
 
   <div class="legend"><span>아직 안 보냄</span><span class="l-sel">지금 선택</span><span class="l-sent">보냄 ✓</span></div>
@@ -129,7 +129,7 @@ textarea{width:100%;box-sizing:border-box;font:inherit;font-size:.9rem;color:var
     <summary>문구 바꾸기</summary>
     <div class="chips" id="chips"></div>
     <textarea id="msg" aria-label="문구 직접 고치기"></textarea>
-    <p class="hint">위 칸에서 직접 고칠 수 있습니다. 맨 앞의 "존경하는 ○○○ 시의원님,"은 자동으로 붙습니다.</p>
+    <p class="hint">위 칸에서 직접 고칠 수 있습니다. 맨 앞의 "존경하는 ○○○ 시의원님,"(국회의원은 "국회의원님,")은 자동으로 붙습니다.</p>
   </details>
 
   <p class="foot">'보냄 ✓' 표시는 보내기 버튼을 누른 기록이며 이 기기에만 남습니다. 실제 전송은 문자 앱에서 확인하세요. <button class="link" id="reset" type="button">표시 모두 지우기</button></p>
@@ -169,7 +169,11 @@ const MEMBERS=`고덕희 010-3462-7712
 최성원 010-3011-6562
 최은주 010-7657-8731
 한주연 010-3200-7112
-황선경 010-5736-8338`.split("\n").map(l=>{const [n,p]=l.trim().split(/\s+/);return{n,p}});
+황선경 010-5736-8338
+김성회 010-4552-9035 국회의원
+김영환 010-8800-7452 국회의원
+이기헌 010-7543-6087 국회의원
+한준호 010-7110-1941 국회의원`.split("\n").map(l=>{const [n,p,t]=l.trim().split(/\s+/);return{n,p,t:t||"시의원"}});
 
 const VARIANTS=[
 "표고제한 삭제안 철회를 촉구합니다. 한번 깎인 능선과 숲은 되돌릴 수 없습니다. 고양의 숲과 시민을 지켜주세요.",
@@ -189,7 +193,9 @@ if(/KAKAOTALK/i.test(navigator.userAgent)){$("kakao").hidden=false;$("ext").href
 const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 
 function textFor(i){if(mode==="mix")return VARIANTS[(i+off)%VARIANTS.length];if(mode==="custom")return custom;return VARIANTS[+mode]}
-function body(i){return "존경하는 "+MEMBERS[i].n+" 시의원님, "+textFor(i)}
+function body(i){const m=MEMBERS[i];let t=textFor(i);
+  if(m.t==="국회의원")t=t.replace("26일 본회의에서 반대해 주십시오","26일 시의회 본회의에서 부결되도록 힘써 주십시오").replace("삭제안을 부결해 주십시오","삭제안이 시의회에서 부결되도록 힘써 주십시오");
+  return "존경하는 "+m.n+" "+m.t+"님, "+t}
 function href(i){return "sms:"+MEMBERS[i].p.replace(/-/g,"")+(isIOS?"&":"?")+"body="+encodeURIComponent(body(i))}
 function esc(t){return t.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
 
@@ -197,7 +203,7 @@ function renderGrid(){
   const g=$("grid");g.innerHTML="";
   MEMBERS.forEach((m,i)=>{const b=document.createElement("button");b.type="button";b.className="nm";
     if(sent.has(m.n))b.classList.add("sent"); if(i===cur)b.classList.add("sel");
-    b.textContent=m.n; b.setAttribute("aria-pressed",i===cur); b.onclick=()=>select(i); g.appendChild(b)});
+    b.textContent=m.t==="국회의원"?m.n+"(국회)":m.n; b.setAttribute("aria-pressed",i===cur); b.onclick=()=>select(i); g.appendChild(b)});
   $("count").textContent=sent.size+" / "+MEMBERS.length+"명";
   $("barFill").style.width=(sent.size/MEMBERS.length*100)+"%";
 }
@@ -205,12 +211,12 @@ function renderPanel(){
   const s=$("send");
   if(cur<0){s.className="send off";s.textContent="보내기";s.removeAttribute("href");return}
   const m=MEMBERS[cur];
-  $("toName").textContent=m.n+" 의원";$("toNum").textContent=m.p;
+  $("toName").textContent=m.n+" "+m.t;$("toNum").textContent=m.p;
   const t=esc(body(cur)).replace(esc(m.n),"<mark>"+esc(m.n)+"</mark>");
   $("preview").innerHTML=t;
   s.href=href(cur);
   if(sent.has(m.n)){s.className="send done";s.textContent="✓ 보냄 · 다시 열기"}
-  else{s.className="send";s.textContent=m.n+" 의원께 보내기"}
+  else{s.className="send";s.textContent=m.n+" "+m.t+"께 보내기"}
 }
 function select(i){cur=i;renderGrid();renderPanel()}
 function nextUnsent(){for(let k=1;k<=MEMBERS.length;k++){const j=(cur+k+MEMBERS.length)%MEMBERS.length;if(!sent.has(MEMBERS[j].n))return j}return -1}
@@ -220,7 +226,7 @@ $("send").addEventListener("click",()=>{
   sent.add(m.n); S.set("sent",JSON.stringify([...sent]));
   setTimeout(()=>{renderGrid();renderPanel();toast(m.n+" 의원 보냄 표시. 문자 앱이 안 열렸다면 번호·문구 복사를 쓰세요")},300);
 });
-$("next").onclick=()=>{const j=nextUnsent();if(j<0){toast("33명 모두 보냄 표시가 되었습니다");return}select(j);
+$("next").onclick=()=>{const j=nextUnsent();if(j<0){toast("모두 보냄 표시가 되었습니다");return}select(j);
   document.querySelectorAll(".nm")[j].scrollIntoView({block:"nearest",behavior:"smooth"})};
 
 function toast(t){const el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2200)}

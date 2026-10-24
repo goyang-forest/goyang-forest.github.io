@@ -176,22 +176,13 @@ const VARIANTS=[
 "산사태·난개발 위험을 키우는 표고제한 삭제안을 부결해 주십시오. 집중호우가 잦은 지금, 시민의 안전을 생각해 주십시오.",
 "표고기준은 고지대 개발을 미리 막아온 안전장치입니다. 경사도 기준이나 위원회 심의로는 이 역할을 대신할 수 없습니다. 26일 본회의에서 반대해 주십시오.",
 "깎인 숲은 되돌릴 수 없습니다. 기준을 없애기보다 연구를 거쳐 더 정교한 기준을 만들어 주십시오. 26일 본회의에서 반대해 주십시오.",
-"난개발 피해가 생긴 뒤에 용역을 하는 것은 순서가 거꾸로입니다. 우리 아이들이 고양의 능선을 보며 안전하게 살 수 있도록, 26일 본회의에서 반대해 주십시오.","표고 기준은 개발 '입지'를, 경사도는 '지형 안정성'을 보는 기준이라 서로 대체할 수 없습니다. 고양시도 최후의 개발 저지선이라며 부동의했습니다. 26일 본회의에서 부결해 주십시오.",
-"고양의 산은 완만한 구릉지가 많아 정상부도 경사 15도 미만인 곳이 많습니다. 표고 기준이 없으면 능선을 따라 연쇄 개발이 가능해집니다. 삭제안을 부결해 주십시오.",
-"고양·파주 경계의 황룡산을 보십시오. 표고 제한이 없는 파주 쪽은 9부 능선까지 깎였고, 고양 쪽 숲은 지켜졌습니다. 그 차이를 만든 표고 기준을 지켜 주십시오.",
-"지난 9월 공포된 조례를 한 달 만에 다시 고치는 것은 행정의 일관성을 해칩니다. 실태조사와 연구로 대안을 찾는 것이 순서입니다. 26일 본회의에서 반대해 주십시오.",
-"일단 삭제하고 문제가 생기면 다시 기준을 만들자는 것은 위험합니다. 한번 깎인 산은 되돌릴 수 없습니다. 연구 용역을 먼저 거친 뒤 결정해 주십시오.",
-"표고 기준이 풀리면 임야를 쪼개 타운하우스나 물류창고를 짓는 개발이 늘어납니다. 진입로와 상하수도 비용은 결국 시민 세금으로 돌아옵니다. 삭제안에 반대해 주십시오.",
-"북한산에서 도심으로 이어지는 바람길이 막히면 열섬과 미세먼지가 심해집니다. 수억 원을 들인 비오톱 지도와 바람길 연구도 무력화됩니다. 표고 기준을 지켜 주십시오.",
-"견달산, 고봉산, 황룡산 자락은 고양시민 모두의 숲입니다. 표고 기준을 삭제해 이 숲의 빗장을 풀지 말아 주십시오. 26일 본회의에서 부결을 부탁드립니다.",
-"법정동 경계 때문에 생기는 불합리는 고쳐야 합니다. 하지만 해법은 전면 삭제가 아니라 실제 지형을 반영한 정교한 기준입니다. 26일 본회의에서 삭제안을 부결해 주십시오.",
-"지금의 결정이 10년, 20년 뒤 고양의 얼굴과 시민의 안전을 결정합니다. 우리 아이들이 북한산 능선을 보며 자랄 수 있도록 표고 기준 삭제에 반대해 주십시오."];
+"난개발 피해가 생긴 뒤에 용역을 하는 것은 순서가 거꾸로입니다. 우리 아이들이 고양의 능선을 보며 안전하게 살 수 있도록, 26일 본회의에서 반대해 주십시오."];
 
 const S={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let mode=S.get("mode")||"mix", custom=S.get("custom")||"", cur=-1;
 // 방문자마다 무작위 시작점: 같은 의원이라도 보내는 사람에 따라 다른 문구가 가도록
 let off=parseInt(S.get("off"),10);
-if(!(off>=0&&off<VARIANTS.length)){off=Math.floor(Math.random()*VARIANTS.length);try{const a=new Uint32Array(1);crypto.getRandomValues(a);off=a[0]%VARIANTS.length}catch(e){}S.set("off",String(off))}
+if(!(off>=0&&off<5)){off=Math.floor(Math.random()*5);try{const a=new Uint32Array(1);crypto.getRandomValues(a);off=a[0]%5}catch(e){}S.set("off",String(off))}
 let sent=new Set(); try{sent=new Set(JSON.parse(S.get("sent")||"[]"))}catch(e){}
 const $=id=>document.getElementById(id);
 if(/KAKAOTALK/i.test(navigator.userAgent)){$("kakao").hidden=false;$("ext").href="kakaotalk://web/openExternal?url="+encodeURIComponent(location.href)}
